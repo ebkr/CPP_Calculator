@@ -1,0 +1,4 @@
+﻿  Calculator.cpp
+c:\users\cade ayres\documents\visual studio 2017\cpp\calculator\calculator\calculator.cpp(10): warning C4018: '<': signed/unsigned mismatch
+c:\users\cade ayres\documents\visual studio 2017\cpp\calculator\calculator\calculator.cpp(33): warning C4018: '<': signed/unsigned mismatch
+  Calculator.vcxproj -> C:\Users\Cade Ayres\Documents\Visual Studio 2017\CPP\Calculator\Debug\Calculator.exe
