@@ -1,7 +1,4 @@
 #pragma once
-#ifndef CALC_H
-#define CALC_H
-
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -14,14 +11,15 @@ public:
 	float getResult();
 
 private:
-	std::vector<std::string>* splitEquation(std::string& str);
-	std::string equationString = "";
+	std::string equationString;
+	// Scan equationString to generate parse-able structure.
+	std::vector<std::string> separateElements(std::string scan);
+	// Scan "scope" to generate answer.
+	std::vector<std::string> unpackScope(std::string scope);
 
-	/*
-	* Used to generate numbers within brackets
-	*/
-	float resolveBrackets(int index);
-	float resolveEquation(std::string& str);
+	// Vector containing {left, expression, right}
+	float parseEquation(std::string calc);
+	std::vector<std::string> findExpression(std::vector<std::string> str, std::string exp);
+
+	
 };
-
-#endif // !CALC_H
