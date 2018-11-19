@@ -59,12 +59,20 @@ std::vector<std::string> Calc::separateElements(std::string str) {
 		// Detect if number
 		try {
 			std::stoi(str.substr(i, 1));
+			if (isalpha(*append.c_str())) {
+				split.push_back(append);
+				append = "";
+			}
 			append += str.substr(i, 1);
 		}
 		// If not a number
 		catch (std::exception e) {
 			if (str.substr(i, 1) == ".") {
 				// Decimal
+				if (isalpha(*append.c_str())) {
+					split.push_back(append);
+					append = "";
+				}
 				append += ".";
 			}
 			else if (str.substr(i, 1) == "-") {
@@ -93,11 +101,22 @@ std::vector<std::string> Calc::separateElements(std::string str) {
 				// Do nothing
 			}
 			else {
-				// Push valid number.
-				split.push_back(append);
-				// Push 
-				split.push_back(str.substr(i, 1));
-				append = "";
+				if (isalpha(*str.substr(i, 1).c_str())) {
+					if (isalpha(*(append + str.substr(i, 1)).c_str())) {
+						append += str.substr(i, 1);
+					}
+					else {
+						split.push_back(append);
+						append = str.substr(i, 1);
+					}
+				}
+				else {
+					// Push valid number.
+					split.push_back(append);
+					// Push 
+					split.push_back(str.substr(i, 1));
+					append = "";
+				}
 			}
 		}
 	}
@@ -113,13 +132,19 @@ float Calc::parseEquation(std::string calc) {
 		// Brackets are handled in scopes.
 		// Addition/Subtraction are on the same level. All elements are added.
 		// Subtractions work via negations.
-	separated = findExpression(separated, "^");
-	separated = findExpression(separated, "/");
-	separated = findExpression(separated, "*");
+	std::vector<std::string> stored = std::vector<std::string>();
+	do {
+		stored = separated;
+		separated = findExpression(separated, "sqrt");
+		separated = findExpression(separated, "^");
+		separated = findExpression(separated, "/");
+		separated = findExpression(separated, "*");
+	} while (separated != stored);
 
 	// Calculate total by adding final scope's values
 	float total = 0;
 	for (std::string str : separated) {
+		std::cout << str << std::endl;
 		total += std::stof(str);
 	}
 	return total;
@@ -138,10 +163,13 @@ std::vector<std::string> Calc::findExpression(std::vector<std::string> str, std:
 			// Left hand value may be null. EG: (2)
 			try {
 				left = str.at(i - 1);
+				if (!isdigit(*left.c_str())) {
+					throw(std::exception("Does not support operator"));
+				}
 				leftIsEmpty = false;
 			}
 			catch (std::exception e) {
-				if (exp == "*") {
+				if (exp == "*" || exp == "sqrt") {
 					left = "1";
 				}
 				else {
@@ -157,6 +185,10 @@ std::vector<std::string> Calc::findExpression(std::vector<std::string> str, std:
 			}
 			else if (exp == "*") {
 				value = std::stof(left) * std::stof(right);
+			}
+			else if (exp == "sqrt") {
+				std::cout << left << ":" << right << std::endl;
+				value = std::stof(left) * sqrt(std::stof(right));
 			}
 			else {
 				value = std::stof(left) + std::stof(right);
